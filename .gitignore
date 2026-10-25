@@ -1,0 +1,4 @@
+secret/config.php
+.env
+venv/
+.venv/
