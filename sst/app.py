@@ -2,8 +2,9 @@ from flask import Flask, redirect, session, render_template
 import secrets
 import os
 from dotenv import load_dotenv
-from urllib.parse import urlencode
+from urllib.parse import urlencode ## ^^ dependencias principais
 app = Flask(__name__)
+callback_url = 'http://127.0.0.1/callback'
 load_dotenv()
 client_id = os.getenv('SST_CLIENT_ID')
 app_key = os.getenv('FLASK_SECRET')
