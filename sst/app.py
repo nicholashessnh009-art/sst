@@ -41,6 +41,30 @@ def collect(spotify_id, access_token):
     conn.commit()
     conn.close()
     
+def getAccessToken(spotify_id):
+    conn = sqlite3.connect(DB)
+    row = conn.execute('SELECT refresh_token FROM users WHERE spotify_id = ?', (spotify_id,)).fetchone()
+    conn.close()
+    if row is None:
+        return None
+    refresh_token = row[0]
+    response = requests.post(
+        'https://accounts.spotify.com/api/token',
+        data={'grant_type': 'refresh_token', 'refresh_token': refresh_token},
+        auth=(client_id, secret)
+    )
+    if response.status_code != 200:
+        print(f"Erro ao obter token de acesso: {response.status_code} - {response.text}")
+        return None
+    tokens = response.json()
+    new_refresh = tokens.get('refresh_token')
+    if new_refresh:
+        conn = sqlite3.connect(DB)
+        conn.execute('UPDATE users SET refresh_token = ? WHERE spotify_id = ?', (new_refresh, spotify_id))
+        conn.commit()
+        conn.close()
+    return tokens['access_token']
+
 
 @app.route('/')
 def home():
@@ -110,6 +134,45 @@ def callback():
     collect(user['id'], session['access_token'])
     return f"Olá, {name}! Você está logado com sucesso."
 
+@app.route('/refresh')
+def refresh():
+    spotify_id = session.get('spotify_id')
+    if not spotify_id:
+        return redirect('/login')
+
+    token = getAccessToken(spotify_id)
+    if not token:
+        return redirect('/login')
+    collect(spotify_id, token)
+    return "Refresh OK!"
+
+@app.route('/profile')
+def profile():
+    spotify_id = session.get('spotify_id')
+    if not spotify_id:
+        return redirect('/login')
+    
+    token = getAccessToken(spotify_id)
+    if not token:
+        return redirect('/login')
+    
+    headers = {'Authorization': f"Bearer {token}"}
+    top = {'limit': 5, 'time_range': 'short_term'}
+
+    r_artists = requests.get('https://api.spotify.com/v1/me/top/artists', headers=headers, params=top)
+    r_tracks = requests.get('https://api.spotify.com/v1/me/top/tracks', headers=headers, params=top)
+    artists = r_artists.json().get('items') if r_artists.status_code == 200 else []
+    tracks = r_tracks.json().get('items') if r_tracks.status_code == 200 else []
+
+    conn = sqlite3.connect(DB)
+    name = conn.execute('SELECT name FROM users WHERE spotify_id = ?', (spotify_id,)).fetchone()[0]
+    total_ms = conn.execute('SELECT SUM(duration_ms) FROM plays WHERE user_id = ?', (spotify_id,)).fetchone()[0] or 0
+    plays_count = conn.execute('SELECT COUNT(*) FROM plays WHERE user_id = ?', (spotify_id,)).fetchone()[0]
+    conn.close()
+
+    minutes = round(total_ms / 60000, 1)
+    return render_template('profile.html', name=name, minutes=minutes,
+                           plays_count=plays_count, artists=artists, tracks=tracks)
 @app.route('/error')
 def error():
     return "Login cancelado"
