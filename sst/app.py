@@ -91,7 +91,8 @@ def login():
         'response_type': 'code',
         'scope': 'user-read-recently-played user-top-read',
         'redirect_uri': callback_url,
-        'state': session['state']
+        'state': session['state'],
+        'show_dialog': 'true'
     }
     encoded = urlencode(parameters)
     return redirect(f'https://accounts.spotify.com/authorize?{encoded}')
@@ -198,8 +199,8 @@ def leaderboard():
     GROUP BY plays.artist ORDER BY times_played DESC LIMIT 5 
 ''').fetchall()
     conn.close()
-    return render_template('leaderboard.html', ranking=ranking, top_artists=top_artists)
-
+    # return render_template('leaderboard.html', ranking=ranking, top_artists=top_artists)
+    return str(ranking) + '<br>' + str(top_artists)
 
 @app.route('/logout')
 def logout():
