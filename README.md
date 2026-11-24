@@ -29,8 +29,8 @@ Sistema de classificação/ranking/placar (por minutos ouvidos)
 Gênero musical mais ouvido por todos os usuários.
 Artista mais ouvido por todos os usuários.
 
-**Irei fazer o site no VScode usando HTML e JS (e talvez PHP (nesse caso python)), e ele será hosteado localmente.**
+**Irei fazer o site no VScode usando HTML, JS, CSS e Python, e ele será hosteado localmente.**
 
 Limitações: 
-**O Spotify só permite autorizar 25 usuários (contas do Spotify) no máximo, então somente 25 contas poderão ser criadas.
+**O Spotify só permite autorizar 5 usuários (contas do Spotify) no máximo, então somente 5 contas poderão ser criadas.
 Nunca mexi com APIs.**
