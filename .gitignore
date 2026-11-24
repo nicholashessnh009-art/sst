@@ -2,3 +2,5 @@ secret/config.php
 .env
 venv/
 .venv/
+sst.db
+*.db
