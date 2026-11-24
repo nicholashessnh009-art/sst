@@ -65,6 +65,18 @@ def getAccessToken(spotify_id):
         conn.close()
     return tokens['access_token']
 
+def collect_all():
+    conn = sqlite3.connect(DB)
+    rows = conn.execute('SELECT spotify_id FROM users').fetchall()
+    conn.close()
+    for row in rows:
+        spotify_id = row[0]
+        access_token = getAccessToken(spotify_id)
+        if access_token:
+            collect(spotify_id, access_token)
+        else:
+            print(f' não foi possivel coletar dados de {spotify_id}.')
+    
 
 @app.route('/')
 def home():
@@ -131,20 +143,15 @@ def callback():
     cursor.execute('INSERT OR REPLACE INTO users (spotify_id, name, refresh_token) VALUES (?, ?, ?)', (user['id'], name, tokens['refresh_token']))
     conn.commit()
     conn.close()
-    collect(user['id'], session['access_token'])
-    return f"Olá, {name}! Você está logado com sucesso."
+    collect_all()
+    return redirect('/profile')
 
 @app.route('/refresh')
 def refresh():
-    spotify_id = session.get('spotify_id')
-    if not spotify_id:
+    if not session.get('spotify_id'):
         return redirect('/login')
-
-    token = getAccessToken(spotify_id)
-    if not token:
-        return redirect('/login')
-    collect(spotify_id, token)
-    return "Refresh OK!"
+    collect_all()
+    return redirect('/profile')
 
 @app.route('/profile')
 def profile():
@@ -173,6 +180,32 @@ def profile():
     minutes = round(total_ms / 60000, 1)
     return render_template('profile.html', name=name, minutes=minutes,
                            plays_count=plays_count, artists=artists, tracks=tracks)
+
+
+@app.route('/leaderboard')
+def leaderboard():
+    conn = sqlite3.connect(DB)
+    ranking = conn.execute('''
+    SELECT users.name, ROUND(SUM(plays.duration_ms) / 60000.0, 1) AS minutes
+    FROM plays JOIN users ON plays.user_id = users.spotify_id
+    GROUP BY plays.user_id
+    ORDER BY minutes DESC
+
+''').fetchall()
+
+    top_artists = conn.execute('''
+    SELECT plays.artist, COUNT(*) AS times_played FROM plays
+    GROUP BY plays.artist ORDER BY times_played DESC LIMIT 5 
+''').fetchall()
+    conn.close()
+    return render_template('leaderboard.html', ranking=ranking, top_artists=top_artists)
+
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect('/')
+
 @app.route('/error')
 def error():
     return "Login cancelado"
