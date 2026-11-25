@@ -6,7 +6,7 @@ from contextlib import redirect_stdout
 
 LOG = os.path.join(os.path.dirname(__file__), "cscript_log.txt")
 # coletor de dados de todos os users
-# executado pelo Agendador de Tarefas do Windows (no meu pc) a cada 3 horas pra coletar dados, pfvr ignore
+# executado pelo Agendador de Tarefas do Windows (no meu pc) a cada 2 horas pra coletar dados, pfvr ignore
 def count_plays():
     conn = sqlite3.connect(DB)
     number = conn.execute('SELECT COUNT(*) FROM plays').fetchone()[0]
