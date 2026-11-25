@@ -3,8 +3,9 @@ import datetime
 import os
 import sqlite3
 from contextlib import redirect_stdout
-
+import subprocess
 LOG = os.path.join(os.path.dirname(__file__), "cscript_log.txt")
+REPO_DIR = "C:/xampp/htdocs/Repositories/SST"
 # coletor de dados de todos os users
 # executado pelo Agendador de Tarefas do Windows (no meu pc) a cada 2 horas pra coletar dados, pfvr ignore
 def count_plays():
@@ -23,6 +24,16 @@ with open(LOG, "a", encoding="utf-8") as log:
             print(f"[{time_now}] Coleta concluída. {after_count - before_count} novos plays. total: {after_count}")
         except Exception as e:
             print(f"[{time_now}] Erro durante a coleta: {e}")
+try:
+    subprocess.run(["git", "add", LOG], cwd=REPO_DIR, check=True)
+    status = subprocess.run(["git", "status", "--porcelain"], cwd=REPO_DIR, capture_output=True, text=True)
+    if status.stdout.strip():
+        subprocess.run(["git", "commit", "-m", f"Atualização do log de coleta em {time_now}"], cwd=REPO_DIR, check=True)
+        subprocess.run(["git", "push"] , cwd=REPO_DIR, check=True)
+except Exception as e:
+    with open(LOG, "a", encoding="utf-8") as log:
+        with redirect_stdout(log): 
+            print(f"[{time_now}] Erro durante o commit/push: {e}")
 
 
 
