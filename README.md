@@ -1,5 +1,5 @@
 # Spotify-Stats-Tracker
-Feito Por Nicholas M Hess (aka Nicholas M Reis)
+Feito Por Nicholas M Hess
 
 Nicholas Hess, Turma 111 INFO do IFsul câmpus Novo Hamburgo
 Professor Lucas Mizusaki
