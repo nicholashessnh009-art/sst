@@ -4,3 +4,4 @@ venv/
 .venv/
 sst.db
 *.db
+profile-page.png

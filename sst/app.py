@@ -1,4 +1,4 @@
-from flask import Flask, redirect, session, render_template, request
+from flask import Flask, redirect, session, render_template, request, jsonify
 import secrets
 import os
 from dotenv import load_dotenv
@@ -80,7 +80,7 @@ def collect_all():
 
 @app.route('/')
 def home():
-    return render_template('home.html')
+    return app.send_static_file('home.html')
 
 @app.route('/login')
 def login():
@@ -160,27 +160,7 @@ def profile():
     if not spotify_id:
         return redirect('/login')
     
-    token = getAccessToken(spotify_id)
-    if not token:
-        return redirect('/login')
-    
-    headers = {'Authorization': f"Bearer {token}"}
-    top = {'limit': 5, 'time_range': 'short_term'}
-
-    r_artists = requests.get('https://api.spotify.com/v1/me/top/artists', headers=headers, params=top)
-    r_tracks = requests.get('https://api.spotify.com/v1/me/top/tracks', headers=headers, params=top)
-    artists = r_artists.json().get('items') if r_artists.status_code == 200 else []
-    tracks = r_tracks.json().get('items') if r_tracks.status_code == 200 else []
-
-    conn = sqlite3.connect(DB)
-    name = conn.execute('SELECT name FROM users WHERE spotify_id = ?', (spotify_id,)).fetchone()[0]
-    total_ms = conn.execute('SELECT SUM(duration_ms) FROM plays WHERE user_id = ?', (spotify_id,)).fetchone()[0] or 0
-    plays_count = conn.execute('SELECT COUNT(*) FROM plays WHERE user_id = ?', (spotify_id,)).fetchone()[0]
-    conn.close()
-
-    minutes = round(total_ms / 60000, 1)
-    return render_template('profile.html', name=name, minutes=minutes,
-                           plays_count=plays_count, artists=artists, tracks=tracks)
+    return app.send_static_file('profile.html')
 
 
 @app.route('/leaderboard')
@@ -201,6 +181,39 @@ def leaderboard():
     conn.close()
     # return render_template('leaderboard.html', ranking=ranking, top_artists=top_artists)
     return str(ranking) + '<br>' + str(top_artists)
+
+@app.route('/api/profile')
+def api_profile():
+    spotify_id = session.get('spotify_id')
+    if not spotify_id:
+        return jsonify({'error': 'Usuário não autenticado'}), 401
+    
+    token = getAccessToken(spotify_id)
+    if not token:
+        return jsonify({'error': 'Usuário não autenticado'}), 401
+    
+    headers = {'Authorization': f"Bearer {token}"}
+    top = {'limit': 5, 'time_range': 'short_term'}
+
+    r_artists = requests.get('https://api.spotify.com/v1/me/top/artists', headers=headers, params=top)
+    r_tracks = requests.get('https://api.spotify.com/v1/me/top/tracks', headers=headers, params=top)
+    artists = r_artists.json().get('items') if r_artists.status_code == 200 else []
+    tracks = r_tracks.json().get('items') if r_tracks.status_code == 200 else []
+
+    conn = sqlite3.connect(DB)
+    name = conn.execute('SELECT name FROM users WHERE spotify_id = ?', (spotify_id,)).fetchone()[0]
+    total_ms = conn.execute('SELECT SUM(duration_ms) FROM plays WHERE user_id = ?', (spotify_id,)).fetchone()[0] or 0
+    plays_count = conn.execute('SELECT COUNT(*) FROM plays WHERE user_id = ?', (spotify_id,)).fetchone()[0]
+    conn.close()
+
+    minutes = round(total_ms / 60000, 1)
+    return jsonify({
+        'name': name,
+        'minutes': minutes,
+        'plays_count': plays_count,
+        'top_artists': [artist['name'] for artist in artists],
+        'top_tracks': [(track['name'], track['artists'][0]['name']) for track in tracks]
+    })
 
 @app.route('/logout')
 def logout():
