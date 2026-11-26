@@ -1,0 +1,15 @@
+:root { 
+    /* variaveis / paleta /////// usar https://coolors.co/ para paleta*/ 
+    --bg1: #e3f3fd; /* mudar cores para uma paleta de verdade dia 26/11 */
+    --bg2: rgb(96, 100, 100);
+    --text1: #111111;
+    --text2: #e3f3fd;
+    --text3: #ffffff;
+    --accent: #5c90ff;
+}
+
+body {
+    background-color: var(--bg2);
+    color: var(--text3);
+    font-family: Arial, sans-serif; /* mudar dps */ 
+}
