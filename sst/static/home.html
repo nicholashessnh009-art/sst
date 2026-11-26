@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="static/js/home.js" defer></script>
+    <link rel="stylesheet" href="static/style/style.css">
     <title>SST: Pagina Inicial</title>
 </head>
 <body>
@@ -13,7 +15,20 @@
         <a href="/logout">Sair</a>
         
     </nav>
-    SST: Pagina Inicial
-    <button onclick="window.location.href='/login'">Login</button>
+    <main>
+    <h1 id="home-title">SST: Stats Tracker for Spotify</h1>
+    <br>
+    <button onclick="window.location.href='/login'" id="login-button">Login</button>
+    <div id="site-desc">
+        <p> descrição do site o-o</p>
+        <ul id="features">
+            <li>Rastrea os artistas e músicas que você escuta!</li>
+            <li>Tem um placar para você comparar as suas estatísticas com as dos seus amigos!</li>
+            <li>Perfil modificável!</li>
+        </ul>
+    </div>
+</main>
+<div id="footer">
+    <p>Feito por: Nicholas Hess<a href="https://github.com/nicholashessnh009-art" target="_blank" rel="noopener noreferrer"><img src='static\style\img\Octicons-mark-github.svg' id="github-icon"></a>
 </body>
 </html>

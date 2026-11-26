@@ -1,15 +1,85 @@
 :root { 
     /* variaveis / paleta /////// usar https://coolors.co/ para paleta*/ 
-    --bg1: #e3f3fd; /* mudar cores para uma paleta de verdade dia 26/11 */
-    --bg2: rgb(96, 100, 100);
-    --text1: #111111;
-    --text2: #e3f3fd;
-    --text3: #ffffff;
-    --accent: #5c90ff;
+    --bg1: #e3f3fd;
+    --bg2: #FCF9ED;
+    --text1: #f5f5f5;
+    --text2: #ffffff;
+    --text3: black;
+    --accent1: #004a80;
+    --ink: #0f0a0a;
+    --shadow: 4px 4px 0 var(--ink);
+    --accent2: #18a999;
+    --accent3: #109648;
 }
 
 body {
-    background-color: var(--bg2);
+    background-color: var(--bg1);
     color: var(--text3);
     font-family: Arial, sans-serif; /* mudar dps */ 
+}
+
+nav {
+    text-align: center;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 90vh;
+
+}
+
+nav {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+}
+
+nav a {
+    text-decoration: underline;
+    color: var(--accent1);
+    font-size: 18px;
+}
+
+nav a:hover {
+    color: hsl(205, 100%, 15%); /* accent1 só que mais escuro (25%) */
+}
+
+#login-button {
+    background: var(--accent1);
+  border: 3px solid var(--ink);
+  box-shadow: var(--shadow);
+  padding: 16px 24px;          
+  margin: 20px;      
+  font-weight: bold;
+  color: var(--text1);
+
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+
+#login-button:hover {
+  transform: translate(4px, 4px);
+    box-shadow: 2px 2px 0px var(--ink);
+    cursor: pointer;
+}
+
+
+
+#home-title {
+    font-size: 64px;
+}
+
+#github-icon {
+    width: 20px;
+    height: 20px;
+    margin-left: 5px;
+    margin-bottom: -5px;
+    transition: transform 0.2s, filter 0.2s;
+}
+
+#github-icon:hover {
+    filter: brightness(0.8);
+    cursor: pointer;
+    transform: scale(1.1);
 }
