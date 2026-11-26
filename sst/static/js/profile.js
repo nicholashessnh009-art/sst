@@ -14,7 +14,7 @@ fetch('/api/profile')
         if (data.top_tracks.length === 0 ){
             topTracksList.textContent = 'Ainda sem dados. Você já ouviu sua primeira música?'
         }
-        for (let artist of data.top_artists['name']) {
+        for (let artist of data.top_artists) {
             const li = document.createElement('li')
             li.textContent = artist
             topArtistsList.appendChild(li)
@@ -24,18 +24,23 @@ fetch('/api/profile')
             li.textContent = `${track.artist} - ${track.track}`
             topTracksList.appendChild(li)
         }
-        if (data.top_artists['image'].length > 0) {
+        if (data.top_artist_image.length > 0) {
 
-            const image_url = data.top_artists['image'][0]
+            const image_url = data.top_artist_image[0]
             let image = document.createElement('img')
+            let label = document.getElementById('top-artist-image-header')
             image.src = image_url
-            image.alt = `Você é superfã de ${data.top_artists['name'][0]}!`
+            label.textContent = `Você é superfã de ${data.top_artists[0]}!`
+            image.alt = `Você é superfã de ${data.top_artists[0]}!`
+            image.title = `${data.top_artists[0]}`
             const imageContainer = document.getElementById('profile-top-artist-image')
             imageContainer.appendChild(image)
+            image.style.borderRadius = '50%'
+            image.style.aspectRatio = '1 / 1'
         }
         else {
             const imageContainer = document.getElementById('profile-top-artist-image')
-            imageContainer.style.display = 'none'
+            
         }
 
 

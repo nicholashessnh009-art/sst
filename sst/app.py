@@ -173,7 +173,7 @@ def leaderboard():
 def api_leaderboard():
     conn = sqlite3.connect(DB)
     ranking = conn.execute('''
-    SELECT users.name, ROUND(SUM(plays.duration_ms) / 60000.0, 1) AS minutes
+    SELECT users.spotify_id, users.name, ROUND(SUM(plays.duration_ms) / 60000.0, 1) AS minutes
     FROM plays JOIN users ON plays.user_id = users.spotify_id
     GROUP BY plays.user_id
     ORDER BY minutes DESC
@@ -187,8 +187,9 @@ def api_leaderboard():
     conn.close()
     
     return jsonify({
-        'ranking': [{'name': row[0], 'minutes': row[1]} for row in ranking],
-        'top_artists': [{'artist': row[0], 'times_played': row[1]} for row in top_artists]
+        'ranking': [{'id': row[0], 'name': row[1], 'minutes': row[2]} for row in ranking],
+        'top_artists': [{'artist': row[0], 'times_played': row[1]} for row in top_artists],
+        'me': {'name': session.get('spotify_id')}
     })
 
 @app.route('/api/profile') ## to do list: adicionar counter de quantas vezes os top_tracks foram tocados.
@@ -220,7 +221,8 @@ def api_profile():
         'name': name,
         'minutes': minutes,
         'plays_count': plays_count,
-        'top_artists': {'name': [artist['name'] for artist in artists], 'image': [artist['images'][0] for artist in artists if artist.get('images')]},
+        'top_artists': [artist['name'] for artist in artists],
+        'top_artist_image': [artist['images'][0]['url'] for artist in artists if artist['images']],
         'top_tracks': [{'track': track['name'], 'artist': track['artists'][0]['name']} for track in spotify_top_tracks]
        
     })  

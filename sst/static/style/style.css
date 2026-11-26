@@ -191,7 +191,7 @@ nav a:hover {
     color: hsl(205, 100%, 15%); /* accent1 só que mais escuro (25%) */
 }
 
-.button {
+.botao {
     background: var(--accent1);
   border: 3px solid var(--ink);
   box-shadow: var(--shadow);
@@ -203,7 +203,7 @@ nav a:hover {
   transition: transform 0.1s, box-shadow 0.1s;
 }
 
-#login-button:hover {
+.botao:hover {
   transform: translate(4px, 4px);
     box-shadow: 2px 2px 0px var(--ink);
     cursor: pointer;
@@ -274,4 +274,10 @@ nav a:hover {
 }
 #top-artists-list {
     font-size: 18px;
+}
+
+
+.voce {
+    color: var(--accent1);
+    font-weight: bold;
 }

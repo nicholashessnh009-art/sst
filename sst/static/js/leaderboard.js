@@ -3,6 +3,7 @@ fetch('/api/leaderboard')
     .then(data => {
         const rankingList = document.getElementById('ranking-list')
         const topArtistsList = document.getElementById('top-artists-list')
+        const currentUser = data.me.name
         if (data.ranking.length === 0 ){
             rankingList.textContent = 'Ainda sem dados. Parece que ninguém escutou nada ainda... :/'
         }
@@ -12,7 +13,11 @@ fetch('/api/leaderboard')
         for (let user of data.ranking) {
             const li = document.createElement('li')
             li.textContent = `${user.name} - ${user.minutes} minutos`
+            li.classList.add('list-element')
             rankingList.appendChild(li)
+            if (user.id === currentUser) {
+                li.classList.add('voce')
+            }
         }
         for (let artista of data.top_artists) {
             const li = document.createElement('li')
