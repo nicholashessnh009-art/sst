@@ -1,11 +1,33 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="static/js/leaderboard.js" defer></script>
+    <link rel="stylesheet" href="static/style/style.css">
     <title>Ranking</title>
 </head>
 <body>
-    
+    <nav id="navegação">
+        <a href="/leaderboard">Ranking</a>
+        <a href="/">Início</a>
+        <a href="/profile">Seu Perfil</a>
+        <a href="/logout">Sair</a>
+        
+    </nav>
+    <main>
+        <h1 id="ranking-header">Ranking</h1>
+        <label for ="ranking-select">Selecione o período de tempo: </label>
+        <select id="ranking-select">
+            <option value="all_time">Todos os tempos</option>
+            <option value="monthly">Mensal</option></select>
+        <br>
+        <label for="top-artists">Usuários que mais ouviram música: </label>
+    <ol id="ranking-list">
+
+    </ol>
+    <ol id="top-artists-list">
+    </ol>
+    </main>
 </body>
 </html>

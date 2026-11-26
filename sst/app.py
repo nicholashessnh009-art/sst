@@ -1,4 +1,4 @@
-from flask import Flask, redirect, session, render_template, request, jsonify
+from flask import Flask, redirect, session, request, jsonify
 import secrets
 import os
 from dotenv import load_dotenv
@@ -76,6 +76,9 @@ def collect_all():
             collect(spotify_id, access_token)
         else:
             print(f' não foi possivel coletar dados de {spotify_id}.')
+
+def top_tracks_count():
+    conn = sqlite3.connect(DB)
     
 
 @app.route('/')
@@ -162,9 +165,12 @@ def profile():
     
     return app.send_static_file('profile.html')
 
-
 @app.route('/leaderboard')
 def leaderboard():
+    return app.send_static_file('leaderboard.html')
+
+@app.route('/api/leaderboard')
+def api_leaderboard():
     conn = sqlite3.connect(DB)
     ranking = conn.execute('''
     SELECT users.name, ROUND(SUM(plays.duration_ms) / 60000.0, 1) AS minutes
@@ -179,10 +185,13 @@ def leaderboard():
     GROUP BY plays.artist ORDER BY times_played DESC LIMIT 5 
 ''').fetchall()
     conn.close()
-    # return render_template('leaderboard.html', ranking=ranking, top_artists=top_artists)
-    return str(ranking) + '<br>' + str(top_artists)
+    
+    return jsonify({
+        'ranking': [{'name': row[0], 'minutes': row[1]} for row in ranking],
+        'top_artists': [{'artist': row[0], 'times_played': row[1]} for row in top_artists]
+    })
 
-@app.route('/api/profile')
+@app.route('/api/profile') ## to do list: adicionar counter de quantas vezes os top_tracks foram tocados.
 def api_profile():
     spotify_id = session.get('spotify_id')
     if not spotify_id:
@@ -198,7 +207,7 @@ def api_profile():
     r_artists = requests.get('https://api.spotify.com/v1/me/top/artists', headers=headers, params=top)
     r_tracks = requests.get('https://api.spotify.com/v1/me/top/tracks', headers=headers, params=top)
     artists = r_artists.json().get('items') if r_artists.status_code == 200 else []
-    tracks = r_tracks.json().get('items') if r_tracks.status_code == 200 else []
+    spotify_top_tracks = r_tracks.json().get('items') if r_tracks.status_code == 200 else []
 
     conn = sqlite3.connect(DB)
     name = conn.execute('SELECT name FROM users WHERE spotify_id = ?', (spotify_id,)).fetchone()[0]
@@ -212,8 +221,9 @@ def api_profile():
         'minutes': minutes,
         'plays_count': plays_count,
         'top_artists': [artist['name'] for artist in artists],
-        'top_tracks': [(track['name'], track['artists'][0]['name']) for track in tracks]
-    })
+        'top_tracks': [{'track': track['name'], 'artist': track['artists'][0]['name']} for track in spotify_top_tracks]
+       
+    })  
 
 @app.route('/logout')
 def logout():
