@@ -6,6 +6,9 @@
     <script src="static/js/profile.js" defer></script>
     <link rel="stylesheet" href="static/style/style.css">
     <title>Seu Perfil</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Fascinate+Inline&family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&family=Jacques+Francois+Shadow&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
 </head>
 <body>
     <nav id="navegação">
@@ -18,18 +21,28 @@
     </nav>
     <main>
     <h1 id="nome"></h1>
+    <div id="gen-profile-info" class="caixa1">
     <p id="acc-age">Idade da conta: <span id='age'></span></p>
     <p id="acc-location">Localização: <span id='location'></span></p>
     <p id="minutes-text"> Minutos ouvidos: <span id="minutes"></span></p>
     <p id="monthly-minutes-text"> Minutos ouvidos esse mês: <span id='monthly-minutes'></span></p>
+    </div>
+    <div id="profile-top-artists" class="caixa1">
     <p id="top_artists-header">Artistas mais Ouvidos</p>
     <ul id="top_artists">
 
     </ul>
+    </div>
+
+    <div id="profile-top-tracks" class="caixa1">
     <p id="top_tracks-header">Músicas mais Ouvidas</p>
     <ul id="top_tracks">
 
         </ul>
+    </div>
+
+    <div id="profile-top-artist-image" class="caixa1">  
+    </div>
     </main>
 <div id="footer">
     <p>Feito por: Nicholas Hess<a href="https://github.com/nicholashessnh009-art" target="_blank" rel="noopener noreferrer"><img src='/static/style/img/Octicons-mark-github.svg' id="github-icon" alt="GitHub"></a>

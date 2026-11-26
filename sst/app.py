@@ -220,7 +220,7 @@ def api_profile():
         'name': name,
         'minutes': minutes,
         'plays_count': plays_count,
-        'top_artists': [artist['name'] for artist in artists],
+        'top_artists': {'name': [artist['name'] for artist in artists], 'image': [artist['images'][0] for artist in artists if artist.get('images')]},
         'top_tracks': [{'track': track['name'], 'artist': track['artists'][0]['name']} for track in spotify_top_tracks]
        
     })  
