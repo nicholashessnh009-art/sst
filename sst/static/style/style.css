@@ -303,6 +303,7 @@ nav a:hover {
     font-weight: 600;
     text-shadow: 2px 2px 0 var(--ink);
     color: var(--bg1);
+    flex-wrap: wrap;
     
 }
 
@@ -332,3 +333,4 @@ nav a:hover {
     transform: translate(4px, 4px);
     box-shadow: 2px 2px 0px var(--ink);
 }
+

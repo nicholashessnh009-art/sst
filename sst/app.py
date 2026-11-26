@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from urllib.parse import urlencode ## ^^ dependencias principais
 import requests
 import sqlite3
+import datetime
 app = Flask(__name__)
 callback_url = 'http://127.0.0.1:5000/callback'
 load_dotenv()
@@ -16,7 +17,7 @@ DB = os.path.join(os.path.dirname(__file__), 'sst.db')
 
 def init_db(location = DB):
     conn = sqlite3.connect(location)
-    conn.execute('CREATE TABLE IF NOT EXISTS users (spotify_id TEXT PRIMARY KEY, name TEXT, refresh_token TEXT)')
+    conn.execute('CREATE TABLE IF NOT EXISTS users (spotify_id TEXT PRIMARY KEY, name TEXT, refresh_token TEXT, created_at TEXT)')
     conn.execute('CREATE TABLE IF NOT EXISTS plays (user_id TEXT, track TEXT, artist TEXT, duration_ms INTEGER, time_played TEXT, UNIQUE(user_id, time_played))')
     conn.commit()
     conn.close()
@@ -144,7 +145,7 @@ def callback():
     name = user['display_name']
     conn = sqlite3.connect(DB)
     cursor = conn.cursor()
-    cursor.execute('INSERT OR REPLACE INTO users (spotify_id, name, refresh_token) VALUES (?, ?, ?)', (user['id'], name, tokens['refresh_token']))
+    cursor.execute('INSERT INTO users (spotify_id, name, refresh_token, created_at) VALUES (?, ?, ?, ?) ON CONFLICT(spotify_id) DO UPDATE SET refresh_token = excluded.refresh_token, name = excluded.name', (user['id'], name, tokens['refresh_token'], datetime.date.today().isoformat()))
     conn.commit()
     conn.close()
     collect_all()
@@ -195,6 +196,9 @@ def api_leaderboard():
 @app.route('/api/profile') ## to do list: adicionar counter de quantas vezes os top_tracks foram tocados.
 def api_profile():
     spotify_id = session.get('spotify_id')
+    server_start = datetime.date.fromisoformat('2026-11-24') # data de início do servidor (não do projeto em si, mas a primeira conta foi registrada dia 24 (eu acho?)
+    today = datetime.date.today()
+    days_since_start = (today - server_start).days
     if not spotify_id:
         return jsonify({'error': 'Usuário não autenticado'}), 401
     
@@ -214,6 +218,9 @@ def api_profile():
     name = conn.execute('SELECT name FROM users WHERE spotify_id = ?', (spotify_id,)).fetchone()[0]
     total_ms = conn.execute('SELECT SUM(duration_ms) FROM plays WHERE user_id = ?', (spotify_id,)).fetchone()[0] or 0
     plays_count = conn.execute('SELECT COUNT(*) FROM plays WHERE user_id = ?', (spotify_id,)).fetchone()[0]
+    created_at = conn.execute('SELECT created_at FROM users WHERE spotify_id = ?', (spotify_id,)).fetchone()[0]
+    created_at_date = datetime.date.fromisoformat(created_at)
+    account_age_days = (today - created_at_date).days
     conn.close()
 
     minutes = round(total_ms / 60000, 1)
@@ -223,8 +230,8 @@ def api_profile():
         'plays_count': plays_count,
         'top_artists': [artist['name'] for artist in artists],
         'top_artist_image': [artist['images'][0]['url'] for artist in artists if artist['images']],
-        'top_tracks': [{'track': track['name'], 'artist': track['artists'][0]['name']} for track in spotify_top_tracks]
-       
+        'top_tracks': [{'track': track['name'], 'artist': track['artists'][0]['name']} for track in spotify_top_tracks],
+        'account_age_days': account_age_days
     })  
 
 @app.route('/logout')

@@ -42,6 +42,11 @@ fetch('/api/profile')
             const imageContainer = document.getElementById('profile-top-artist-image')
             
         }
-
-
+        const accountAgeElement = document.getElementById('age')
+        if (data.account_age_days == undefined) {
+            accountAgeElement.textContent = 'Sem dados'
+        }
+        else {
+            accountAgeElement.textContent = `${data.account_age_days + 1} dias`
+        }
     })
