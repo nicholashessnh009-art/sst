@@ -8,6 +8,7 @@ LOG = os.path.join(os.path.dirname(__file__), "cscript_log.txt")
 REPO_DIR = "C:/xampp/htdocs/Repositories/SST"
 # coletor de dados de todos os users
 # executado pelo Agendador de Tarefas do Windows (no meu pc) a cada 2 horas pra coletar dados, pfvr ignore
+# cscript_log.txt pode ter algumas imprecisões de contagem, mas isso não afeta em nada. Ex: "...0 novos plays (355 -> 356)"
 def count_plays():
     conn = sqlite3.connect(DB)
     number = conn.execute('SELECT COUNT(*) FROM plays').fetchone()[0]
