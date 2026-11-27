@@ -219,29 +219,6 @@ nav a:hover {
     text-shadow: 4px 4px 0 rgba(0, 74, 128, 0.5); /* accent1 + 0,5 opcatity*/
 
 }
-#home-title span{ /* efeito de glow no titulo usando span e keyframes */
-    display: inline-block;
-    color: var(--ink);
-    animation: glow 5s ease-in-out infinite;
-    animation-delay: calc(var(--i) * 0.2s);
-    text-shadow: 0 0 0 transparent, 0 0 0 transparent;
-
-}
-
-@keyframes glow {
-    0%, 100% {
-        color: var(--ink);
-        text-shadow: 0 0 0 transparent, 0 0 0 transparent;
-    }
-    15% {
-        color: #1DB954;
-        text-shadow: 0 0 10px #1DB954, 0 0 20px rgba(29, 185, 84, 0.6); 
-    }
-    30% {
-        color: #1DB954;
-        text-shadow: 0 0 0 transparent, 0 0 0 transparent;
-    }
-}
 
 #home-desc-header {
     font-size: 18px;
