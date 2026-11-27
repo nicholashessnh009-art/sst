@@ -11,7 +11,7 @@ fetch('/api/profile')
             profileImage.alt = `Imagem de perfil de ${data.name}`
         }
         else {
-            profileImage.src = '/static/style/img/default-profile.png'
+            profileImage.src = '/static/style/img/user-avatar-filled.svg'
         }
         const topArtistsList = document.getElementById('top_artists')
         const topTracksList = document.getElementById('top_tracks')

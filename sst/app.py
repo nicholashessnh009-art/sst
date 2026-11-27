@@ -266,7 +266,10 @@ def edit_profile():
         return redirect('/login')
 
     if request.method == "POST":
-        location = request.form.get('location').strip()
+        try:
+            location = request.form.get('location').strip()
+        except AttributeError:
+            location = ''
         conn = sqlite3.connect(DB)
         conn.execute('UPDATE users SET location = ? WHERE spotify_id = ?', (location, spotify_id))
         conn.commit()
