@@ -500,3 +500,62 @@ nav a:hover {
   align-items: center;
 
 }
+
+#ep-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+#ep-user {
+  align-self: flex-start;
+  font-size: 18px;
+}
+
+#location-select {
+  width: 100%;
+  padding: 8px;
+  border: 3px solid var(--ink);
+  box-shadow: var(--shadow);
+  background-color: var(--text2);
+  color: var(--ink);
+  font-size: 14px;
+  font-family: "Space Mono", monospace;
+
+  transition: transform 0.1s, box-shadow 0.1s, border-color 0.1s;
+}
+
+#location-select:focus {
+  outline: none;
+  border-color: var(--ink );
+  box-shadow: 3px 3px 5px var(--ink);
+  transform: translate(2px, 2px);
+}
+
+#name-and-ep-button {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+}
+#nome {
+  width: auto;
+}
+
+#edit-profile {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  margin-top: 3px;
+  transition: transform 0.2s;
+}
+#config-img {
+  width: 24px;
+  height: 24px;
+}
+
+#edit-profile:hover {
+  transform: scale(1.1);
+  cursor: pointer;
+}

@@ -56,6 +56,16 @@ fetch('/api/profile')
         else {
             accountAgeElement.textContent = `${data.account_age_days + 1} dias`
         }
+        
+        accLocation = document.getElementById('location')
+        if (data.location == undefined || data.location == null || data.location == '') {
+            accLocation.textContent = 'Sem dados ( •̯́ ₃ •̯̀)'
+        }
+        else {
+            accLocation.textContent = data.location
+        }
+
+
 
         document.getElementById('carregando').style.display = 'none'
         document.getElementById('content').classList.remove('hidden')

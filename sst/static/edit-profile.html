@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="static/js/edit-profile.js" defer></script>
+    <link rel="stylesheet" href="static/style/style.css">
+    <script src="static/js/nav.js" defer></script>
+    <title>Seu Perfil</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Fascinate+Inline&family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&family=Jacques+Francois+Shadow&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav id="navegação">
+        <button id="avatar-btn" aria-label="abrir menu"><img id='avatar' alt=""></button>
+        <div id="links">
+        <a href="/leaderboard">Ranking</a>
+        <a href="/">Início</a>
+        <a href="/profile">Seu Perfil</a>
+        <a href="/logout" onclick="return confirm('Você tem certeza? (╥﹏╥)')">Sair</a>
+        </div>
+        
+        
+    </nav>
+    <aside id="sidebar">
+        
+        <div id='sidebar-user-info'>
+            <button id='avatar-btn2' onclick="toggleSidebar()">
+                <img id='avatar2'>
+            </button>
+            <p id='sidebar-username'></p>
+        </div>
+        <div id="sidebar-links">
+        <a href="/profile">Seu Perfil</a>
+        <a href="/edit-profile">Editar Perfil</a>
+        <a href="/leaderboard">Ranking</a>
+        <a href="/logout" onclick="return confirm('Você tem certeza? (╥﹏╥)')">Sair</a>
+         <div class='btn-div1'><button id="close-sidebar"><img src="/static/style/img/close.svg"></button></div>
+        </div>
+    </aside>
+    <main>
+        <div id="carregando">Carregando...</div>
+        <div id="content" class="hidden">
+            <h1 id="edit-profile-header">Editar Perfil</h1>
+            <form action="/edit-profile" method="POST" class="caixa1" id="ep-form">
+                <p id='ep-user'></p>
+                <div id="main-form-div">
+                <label for="location" id="location-label">Localização:</label>
+                <select name="location" id="location-select">
+                    <option value="">Selecione sua Localização:</option>
+                    <option value="Brasil">Brasil</option>
+                    <option value="Estados Unidos">Estados Unidos</option>
+                    <option value="Canadá">Canadá</option>
+                    <option value="Reino Unido">Reino Unido</option>
+                    <option value="Austrália">Austrália</option> 
+                    <option value="Alemanha">Alemanha</option>
+                    <option value="França">França</option>
+                    <option value="Espanha">Espanha</option>
+                    <option value="Itália">Itália</option>
+                    <option value="Japão">Japão</option>
+                    <option value="China">China</option>
+                    <option value="Índia">Índia</option>
+                    <option value="México">México</option>
+                    <option value="Rússia">Rússia</option>
+                    <option value="África do Sul">África do Sul</option>
+                    <option value="Argentina">Argentina</option>
+                    <option value="Colômbia">Colômbia</option>
+                    <option value="Chile">Chile</option>
+                    <option value="Peru">Peru</option>
+                    <option value="Palestina">Palestina</option>
+                </select>
+                </div>
+                <button type="submit" id="submit-btn" class="botao" style="background-color: var(--accent3); font-family: 'Space Mono', monospace;">Salvar</button>
+
+
+
+            </form>
+
+        </div>
+    </main>
+<div id="footer">
+    <p>Feito por: Nicholas Hess<a href="https://github.com/nicholashessnh009-art" target="_blank" rel="noopener noreferrer" title="Meu GitHub!"><img src='/static/style/img/Octicons-mark-github.svg' id="github-icon" alt="GitHub"></a>
+    </p></div>
+</body>
+</html>

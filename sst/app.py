@@ -242,6 +242,7 @@ def api_profile():
     created_at_date = datetime.date.fromisoformat(created_at)
     account_age_days = (today - created_at_date).days
     pfp = conn.execute('SELECT pfp FROM users WHERE spotify_id = ?', (spotify_id,)).fetchone()[0]
+    location = conn.execute('SELECT location FROM users WHERE spotify_id = ?', (spotify_id,)).fetchone()[0]
 
     conn.close()
 
@@ -254,8 +255,25 @@ def api_profile():
         'top_artist_image': [artist['images'][0]['url'] for artist in artists if artist['images']],
         'top_tracks': [{'track': track['name'], 'artist': track['artists'][0]['name']} for track in spotify_top_tracks],
         'account_age_days': account_age_days,
-        'pfp': pfp
+        'pfp': pfp,
+        'location': location
     })  
+
+@app.route('/edit-profile', methods=['GET', 'POST'])
+def edit_profile():
+    spotify_id = session.get('spotify_id')
+    if not spotify_id:
+        return redirect('/login')
+
+    if request.method == "POST":
+        location = request.form.get('location').strip()
+        conn = sqlite3.connect(DB)
+        conn.execute('UPDATE users SET location = ? WHERE spotify_id = ?', (location, spotify_id))
+        conn.commit()
+        conn.close()
+        return redirect('/profile')
+    return app.send_static_file('edit-profile.html')
+    
 
 @app.route('/logout')
 def logout():
