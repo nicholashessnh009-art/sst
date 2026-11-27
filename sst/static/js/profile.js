@@ -5,7 +5,14 @@ fetch('/api/profile')
         let minutos = document.getElementById('minutes')
         nome.textContent = data.name
         minutos.textContent = data.minutes
-
+        let profileImage = document.getElementById('profile-image')
+        if (data.pfp) {
+            profileImage.src = data.pfp
+            profileImage.alt = `Imagem de perfil de ${data.name}`
+        }
+        else {
+            profileImage.src = '/static/style/img/default-profile.png'
+        }
         const topArtistsList = document.getElementById('top_artists')
         const topTracksList = document.getElementById('top_tracks')
         if (data.top_artists.length === 0 ){
@@ -49,6 +56,7 @@ fetch('/api/profile')
         else {
             accountAgeElement.textContent = `${data.account_age_days + 1} dias`
         }
+
         document.getElementById('carregando').style.display = 'none'
         document.getElementById('content').classList.remove('hidden')
     })

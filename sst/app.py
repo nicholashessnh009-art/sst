@@ -241,6 +241,8 @@ def api_profile():
     created_at = conn.execute('SELECT created_at FROM users WHERE spotify_id = ?', (spotify_id,)).fetchone()[0]
     created_at_date = datetime.date.fromisoformat(created_at)
     account_age_days = (today - created_at_date).days
+    pfp = conn.execute('SELECT pfp FROM users WHERE spotify_id = ?', (spotify_id,)).fetchone()[0]
+
     conn.close()
 
     minutes = round(total_ms / 60000, 1)
@@ -251,7 +253,8 @@ def api_profile():
         'top_artists': [artist['name'] for artist in artists],
         'top_artist_image': [artist['images'][0]['url'] for artist in artists if artist['images']],
         'top_tracks': [{'track': track['name'], 'artist': track['artists'][0]['name']} for track in spotify_top_tracks],
-        'account_age_days': account_age_days
+        'account_age_days': account_age_days,
+        'pfp': pfp
     })  
 
 @app.route('/logout')

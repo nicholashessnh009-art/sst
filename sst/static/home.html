@@ -26,16 +26,18 @@
     <aside id="sidebar">
         
         <div id='sidebar-user-info'>
-            <button id='avatar-btn2' onclick="window.location.href='/profile'">
+            <button id='avatar-btn2' onclick="toggleSidebar()">
                 <img id='avatar2'>
             </button>
             <p id='sidebar-username'></p>
         </div>
+        <div id="sidebar-links">
         <a href="/profile">Seu Perfil</a>
         <a href="/edit-profile">Editar Perfil</a>
         <a href="/leaderboard">Ranking</a>
         <a href="/logout" onclick="return confirm('Você tem certeza? (╥﹏╥)')">Sair</a>
-         <button id="close-sidebar"><img src="/static/style/img/close.svg"></button>
+         <div class='btn-div1'><button id="close-sidebar"><img src="/static/style/img/close.svg"></button></div>
+        </div>
     </aside>
     <main class="home-page">
     <h1 id="home-title">SST: Stats Tracker for Spotify</h1>

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="static/js/profile.js" defer></script>
     <link rel="stylesheet" href="static/style/style.css">
+    <script src="static/js/nav.js" defer></script>
     <title>Seu Perfil</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,16 +13,38 @@
 </head>
 <body>
     <nav id="navegação">
+        <button id="avatar-btn" aria-label="abrir menu"><img id='avatar' alt=""></button>
         <div id="links">
         <a href="/leaderboard">Ranking</a>
         <a href="/">Início</a>
         <a href="/profile">Seu Perfil</a>
         <a href="/logout" onclick="return confirm('Você tem certeza? (╥﹏╥)')">Sair</a>
         </div>
+        
+        
     </nav>
+    <aside id="sidebar">
+        
+        <div id='sidebar-user-info'>
+            <button id='avatar-btn2' onclick="toggleSidebar()">
+                <img id='avatar2'>
+            </button>
+            <p id='sidebar-username'></p>
+        </div>
+        <div id="sidebar-links">
+        <a href="/profile">Seu Perfil</a>
+        <a href="/edit-profile">Editar Perfil</a>
+        <a href="/leaderboard">Ranking</a>
+        <a href="/logout" onclick="return confirm('Você tem certeza? (╥﹏╥)')">Sair</a>
+         <div class='btn-div1'><button id="close-sidebar"><img src="/static/style/img/close.svg"></button></div>
+        </div>
+    </aside>
     <main>
         <div id="carregando">Carregando...</div>
     <div id="content" class="hidden">
+        <div id="pfp-div">
+    <img id="profile-image" class="caixa1" alt="Imagem de perfil">
+    </div>
     <h1 id="nome"></h1>
     <div id="gen-profile-info" class="caixa1">
     <p id="acc-age">Idade da conta: <span id='age'></span></p>
