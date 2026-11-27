@@ -24,4 +24,6 @@ fetch('/api/leaderboard')
             li.textContent = `${artista.artist} - ${artista.times_played} reproduções`
             topArtistsList.appendChild(li)
         }
+        document.getElementById('carregando').style.display = 'none'
+        document.getElementById('content').classList.remove('hidden')
     })

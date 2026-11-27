@@ -216,6 +216,7 @@ nav a:hover {
     margin-top: 60px;
     margin-bottom:60px;
     font-family: "Archivo Black", Arial;
+    text-shadow: 4px 4px 0 rgba(0, 74, 128, 0.5); /* accent1 + 0,5 opcatity*/
 }
 #home-desc-header {
     font-size: 18px;
@@ -334,3 +335,6 @@ nav a:hover {
     box-shadow: 2px 2px 0px var(--ink);
 }
 
+.hidden {
+    display: none;
+}

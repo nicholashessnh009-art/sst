@@ -49,4 +49,6 @@ fetch('/api/profile')
         else {
             accountAgeElement.textContent = `${data.account_age_days + 1} dias`
         }
+        document.getElementById('carregando').style.display = 'none'
+        document.getElementById('content').classList.remove('hidden')
     })
