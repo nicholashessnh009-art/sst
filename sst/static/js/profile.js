@@ -30,7 +30,7 @@ fetch('/api/profile')
             let image = document.createElement('img')
             let label = document.getElementById('top-artist-image-header')
             image.src = image_url
-            label.textContent = `Você é superfã de ${data.top_artists[0]}!`
+            label.innerHTML = `Você é superfã de <span id='superfan-text'>${data.top_artists[0]}</span>!`
             image.alt = `Você é superfã de ${data.top_artists[0]}!`
             image.title = `${data.top_artists[0]}`
             const imageContainer = document.getElementById('profile-top-artist-image')
