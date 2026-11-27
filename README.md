@@ -6,32 +6,40 @@ Professor Lucas Mizusaki
 
 
 **Site de Rastreamento de Estatísticas do Spotify**
+<img width="1920" height="952" alt="image" src="https://github.com/user-attachments/assets/8d36182c-fbf2-4e90-a0e0-abf7ccd410c3" />
+Página Inicial    
 
-**Key features:**
-_Rastreamento das estatísticas de reprodução dos usuários
-Sistema de login seguro
-Uso da API do Spotify para acessar os dados dos usuários
-Rankings de usuários  (por gênero, artista e minutos ouvidos)
-Responsivo / acessível para todos os tipos de telas_
+<img width="1920" height="950" alt="image" src="https://github.com/user-attachments/assets/80e406c6-ed75-4f6c-9e14-1ac4aad868ae" />
+Página de Ranking/Placar    
 
-O site será composto por algumas páginas, tendo a seguinte estrutura:
+<img width="1920" height="952" alt="image" src="https://github.com/user-attachments/assets/e970b106-4ccb-41e1-a97c-103d5b344cf6" />
+Página de Perfil
 
-**Página Principal:**
-Apresenta o site aos usuários, listando suas funcionalidades e capacidades, além de possuir um botão de login grande.
-Inclui uma sidebar e um menu de navegação completo, permitindo acessar todas as outras páginas.
 
-**Página de Login / API:**
-Permite que o usuário se cadastre ou faça login.
-Permite a autorização do Spotify (Acesso ao API); Irei utilizar o Spotify Developer Dashboard para poder gerar um token de API, e um serviço de terceiro como o OAuth 2.0 para pegar dados específicos. (Ainda não sei muito bem como posso implementar isso no meu site, mas irei pesquisar sobre)
 
-**Página de Estatísticas Pessoais / Perfil (Conta):**
-Permite visualizar o histórico de reprodução (não sei se é 100% possível)
-Sistema de classificação/ranking/placar (por minutos ouvidos)
-Gênero musical mais ouvido por todos os usuários.
-Artista mais ouvido por todos os usuários.
 
-**Irei fazer o site no VScode usando HTML, JS, CSS e Python, e ele será hosteado localmente.**
+## Funcionalidades: 
+  - Rastreia seus artistas e músicas mais ouvidos
+  - Ranking de pessoas que mais ouviram música (em minutos)
+  - Ranking de artistas mais ouvidos entre usuários
+  - Perfil semi-customizável
 
-Limitações: 
-**O Spotify só permite autorizar 5 usuários (contas do Spotify) no máximo, então somente 5 contas poderão ser criadas.
-Nunca mexi com APIs.**
+## Tecnologias usadas:
+  - Python + Flask
+  - HTML, CSS
+  - JS
+  - Spotify API
+
+## Como rodar:
+  1. Clone o repo
+  2. Crie um venv
+  3. instale as dependências (pip install -r requirements.txt)
+  4. Crie um app no [Spotify Developer Dashboard](https://developer.spotify.com/dashboard)
+  5. Preencha as informações de .env.example e mude o nome para .env
+  6. Execute app.py
+  7.  Abra http://127.0.0.1:5000
+## Limitações:
+  - Máximo 5 usuários + Spotify API precisa de Premium;
+  - Precisa autorizar o email de cada usuário no Developer Dashboard do Spotify
+### Links importantes:
+[Documentação do Spotify API](https://developer.spotify.com/documentation/web-api)
