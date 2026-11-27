@@ -1,4 +1,4 @@
-fetch('/api/profile')
+fetch('/api/profile') // pega dados completos do usuario (incluindo musicas/artistas mais ouvidos)
     .then(response => response.json())
     .then (data => {
         let nome = document.getElementById('nome')

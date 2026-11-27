@@ -1,6 +1,6 @@
-fetch('/api/leaderboard')
-    .then(response => response.json())
-    .then(data => {
+fetch('/api/leaderboard') // pega informações do servidor (ranking, artistas, etc)
+    .then(response => response.json()) // converte a resposta em JSON
+    .then(data => { // quando a resposta chega, executa essa função
         const rankingList = document.getElementById('ranking-list')
         const topArtistsList = document.getElementById('top-artists-list')
         const currentUser = data.me.name

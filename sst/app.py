@@ -6,48 +6,50 @@ from urllib.parse import urlencode ## ^^ dependencias principais
 import requests
 import sqlite3
 import datetime
+
+
 app = Flask(__name__)
 callback_url = 'http://127.0.0.1:5000/callback'
 load_dotenv()
-client_id = os.getenv('SST_CLIENT_ID')
-app_key = os.getenv('FLASK_SECRET')
+client_id = os.getenv('SST_CLIENT_ID') # pega o client id do .env
+app_key = os.getenv('FLASK_SECRET') # pega o secret do Flask do mesmo lugar
 app.secret_key = app_key
-secret = os.getenv('SST_SECRET')
+secret = os.getenv('SST_SECRET') # pega o secret do Spotify do mesmo lugar
 DB = os.path.join(os.path.dirname(__file__), 'sst.db')
 
-def init_db(location = DB):
+def init_db(location = DB):  #função serve pra inicializar o banco de dados SQLite (se ele ainda não foi criado). Ele passa o parametro location, que por padrão é a const DB.
     conn = sqlite3.connect(location)
     conn.execute('CREATE TABLE IF NOT EXISTS users (spotify_id TEXT PRIMARY KEY, name TEXT, refresh_token TEXT, created_at TEXT)')
     conn.execute('CREATE TABLE IF NOT EXISTS plays (user_id TEXT, track TEXT, artist TEXT, duration_ms INTEGER, time_played TEXT, UNIQUE(user_id, time_played))')
-    for column in ['pfp', 'location']:
+    for column in ['pfp', 'location']:  ## adiciona as colunas pfp e location na tabela, já que adicionei essas funções depois de ter criado o db.
         try:
             conn.execute(f'ALTER TABLE users ADD COLUMN {column} TEXT')
         except sqlite3.OperationalError:
             pass  # Coluna já existe, ignorar o erro
     conn.commit()
     conn.close()
-init_db()
+init_db()  ## inicializa o db usando o diretório padrão
 
 
-def collect(spotify_id, access_token):
-    response = requests.get(
-        'https://api.spotify.com/v1/me/player/recently-played',
+def collect(spotify_id, access_token): # coleta os dados de reprodução recentes do usuario usando o API do spotify
+    response = requests.get( #utiliza o módulo requests para fazer uma request GET para o endpoint de reprodução recente do Spotify
+        'https://api.spotify.com/v1/me/player/recently-played', 
         headers={'Authorization': f"Bearer {access_token}"}, 
         params={'limit': 50}
     )
-    if response.status_code != 200:
+    if response.status_code != 200: # se a resposta não for 200 (algo deu errado) ele printa a mensagem de erro
         print(f"Erro ao coletar dados do Spotify: {response.status_code} - {response.text}")
         return
     items = response.json()['items']
     conn = sqlite3.connect(DB)
     for item in items:
         track = item['track']
-        conn.execute('INSERT OR IGNORE INTO plays (user_id, track, artist, duration_ms, time_played) VALUES (?, ?, ?, ?, ?)',
+        conn.execute('INSERT OR IGNORE INTO plays (user_id, track, artist, duration_ms, time_played) VALUES (?, ?, ?, ?, ?)', # insere os dados passados pelo spotify no banco de dados
                      (spotify_id, track['name'], track['artists'][0]['name'], track['duration_ms'], item['played_at']))
-    conn.commit()
+    conn.commit() # salva as alterações
     conn.close()
     
-def getAccessToken(spotify_id):
+def getAccessToken(spotify_id): # função que pega o refresh token do usuario no banco de dados e usa ele para pegar um access token novo do Spotify. Se o refresh token for atualizado, ele atualiza o banco de dados também
     conn = sqlite3.connect(DB)
     row = conn.execute('SELECT refresh_token FROM users WHERE spotify_id = ?', (spotify_id,)).fetchone()
     conn.close()
@@ -71,7 +73,7 @@ def getAccessToken(spotify_id):
         conn.close()
     return tokens['access_token']
 
-def collect_all():
+def collect_all(): # coleta os dados de todos os usuarios (antes utilizava a função collect() para fazer isso)
     conn = sqlite3.connect(DB)
     rows = conn.execute('SELECT spotify_id FROM users').fetchall()
     conn.close()
@@ -83,22 +85,21 @@ def collect_all():
         else:
             print(f' não foi possivel coletar dados de {spotify_id}.')
 
-def top_tracks_count():
-    conn = sqlite3.connect(DB)
+
     
 
-@app.route('/')
+@app.route('/') # rota padrão (pagina inicial do site)
 def home():
     return app.send_static_file('home.html')
 
-@app.route('/login')
+@app.route('/login') # rota de login (redireciona o usuario para a pagina de autenticação do spotify)
 def login():
     session['state'] = secrets.token_hex(16)
 
-    parameters = {
+    parameters = { # parametros que são passados para a pagina de autenticação do spotify
         'client_id': client_id,
         'response_type': 'code',
-        'scope': 'user-read-recently-played user-top-read',
+        'scope': 'user-read-recently-played user-top-read', # escopo de permissões que o projeto utiliza
         'redirect_uri': callback_url,
         'state': session['state'],
         'show_dialog': 'true'
@@ -107,7 +108,7 @@ def login():
     return redirect(f'https://accounts.spotify.com/authorize?{encoded}')
 
 @app.route('/callback')
-def callback():
+def callback(): # rota de callback (rota chamada pelo spotify após a autenticação)
     state = request.args.get('state')
     code = request.args.get('code')
     error = request.args.get('error')
@@ -138,7 +139,7 @@ def callback():
   
     tokens = response.json()
     session['access_token'] = tokens['access_token']
-    eu = requests.get(
+    eu = requests.get( # pega os dados do spotify do usuario
 
         'https://api.spotify.com/v1/me',
         headers={'Authorization': f"Bearer {session['access_token']}"}
@@ -147,17 +148,17 @@ def callback():
         return eu.text
     user = eu.json()
     session['spotify_id'] = user['id']
-    name = user['display_name']
-    pfp = user['images'][0]['url'] if user['images'] else None
+    name = user['display_name'] # nome do usuario (normalmente diferente do spotify_id)
+    pfp = user['images'][0]['url'] if user['images'] else None # foto de perfil da conta do spotify do usuario
     conn = sqlite3.connect(DB)
     cursor = conn.cursor()
-    cursor.execute('INSERT INTO users (spotify_id, name, refresh_token, created_at, pfp) VALUES (?, ?, ?, ?, ?) ON CONFLICT(spotify_id) DO UPDATE SET refresh_token = excluded.refresh_token, name = excluded.name, pfp = excluded.pfp ' , (user['id'], name, tokens['refresh_token'], datetime.date.today().isoformat(), pfp))
+    cursor.execute('INSERT INTO users (spotify_id, name, refresh_token, created_at, pfp) VALUES (?, ?, ?, ?, ?) ON CONFLICT(spotify_id) DO UPDATE SET refresh_token = excluded.refresh_token, name = excluded.name, pfp = excluded.pfp ' , (user['id'], name, tokens['refresh_token'], datetime.date.today().isoformat(), pfp)) # insere os dados do usuario no banco de dados (ou atualiza caso o usuario já exista)
     conn.commit()
     conn.close()
     collect_all()
     return redirect('/profile')
 
-@app.route('/refresh')
+@app.route('/refresh') # rota que atualiza os dados de reprodução (de todos os usuarios). Gostaria de ter feito um botão na pagina de perfil do usuario que chame essa função, mas acabei não fazendo
 def refresh():
     if not session.get('spotify_id'):
         return redirect('/login')
@@ -176,7 +177,7 @@ def profile():
 def leaderboard():
     return app.send_static_file('leaderboard.html')
 
-@app.route('/api/me')
+@app.route('/api/me') # rota que retorna os dados do usuario logado (é responsavel por mandar os dados do usuario para o js, que depois os mostra na pagina (tbm é uma versão mais curta de api/profile))
 def api_me():
     spotify_id = session.get('spotify_id')
     if not spotify_id:
@@ -186,7 +187,7 @@ def api_me():
     pfp = conn.execute('SELECT pfp FROM users WHERE spotify_id = ?', (spotify_id,)).fetchone()[0]
     location = conn.execute('SELECT location FROM users WHERE spotify_id = ?', (spotify_id,)).fetchone()[0]
     conn.close()
-    return jsonify({'logged_in': True, 'name': name, 'pfp': pfp, 'location': location})
+    return jsonify({'logged_in': True, 'name': name, 'pfp': pfp, 'location': location}) # retorna os dados do usuario logado em um formato JSON
 
 
                     
@@ -199,21 +200,21 @@ def api_leaderboard():
     GROUP BY plays.user_id
     ORDER BY minutes DESC
 
-''').fetchall()
+''').fetchall() # ordena os dados de reprodução dos usuarios e faz uma classificação com eles
 
     top_artists = conn.execute('''
     SELECT plays.artist, COUNT(*) AS times_played FROM plays
     GROUP BY plays.artist ORDER BY times_played DESC LIMIT 5 
-''').fetchall()
+''').fetchall() # mesma coisa só que com os artistas mais ouvidos
     conn.close()
     
     return jsonify({
         'ranking': [{'id': row[0], 'name': row[1], 'minutes': row[2]} for row in ranking],
         'top_artists': [{'artist': row[0], 'times_played': row[1]} for row in top_artists],
         'me': {'name': session.get('spotify_id')}
-    })
+    }) # retorna os dados de classificação em um JSON
 
-@app.route('/api/profile') ## to do list: adicionar counter de quantas vezes os top_tracks foram tocados.
+@app.route('/api/profile') # pega os dados do usuario logado e retorna eles em um JSOn
 def api_profile():
     spotify_id = session.get('spotify_id')
     server_start = datetime.date.fromisoformat('2026-11-24') # data de início do servidor (não do projeto em si, mas a primeira conta foi registrada dia 24 (eu acho?)
@@ -229,9 +230,9 @@ def api_profile():
     headers = {'Authorization': f"Bearer {token}"}
     top = {'limit': 5, 'time_range': 'short_term'}
 
-    r_artists = requests.get('https://api.spotify.com/v1/me/top/artists', headers=headers, params=top)
-    r_tracks = requests.get('https://api.spotify.com/v1/me/top/tracks', headers=headers, params=top)
-    artists = r_artists.json().get('items') if r_artists.status_code == 200 else []
+    r_artists = requests.get('https://api.spotify.com/v1/me/top/artists', headers=headers, params=top) # pega os artistas mais ouvidos do usuario
+    r_tracks = requests.get('https://api.spotify.com/v1/me/top/tracks', headers=headers, params=top) # pega as musicas mais ouvidas do usuario
+    artists = r_artists.json().get('items') if r_artists.status_code == 200 else [] # se der erro, retorna uma list vazia
     spotify_top_tracks = r_tracks.json().get('items') if r_tracks.status_code == 200 else []
 
     conn = sqlite3.connect(DB)
@@ -240,16 +241,16 @@ def api_profile():
     plays_count = conn.execute('SELECT COUNT(*) FROM plays WHERE user_id = ?', (spotify_id,)).fetchone()[0]
     created_at = conn.execute('SELECT created_at FROM users WHERE spotify_id = ?', (spotify_id,)).fetchone()[0]
     created_at_date = datetime.date.fromisoformat(created_at)
-    account_age_days = (today - created_at_date).days
+    account_age_days = (today - created_at_date).days # idade da conta do usuario em dias
     pfp = conn.execute('SELECT pfp FROM users WHERE spotify_id = ?', (spotify_id,)).fetchone()[0]
     location = conn.execute('SELECT location FROM users WHERE spotify_id = ?', (spotify_id,)).fetchone()[0]
 
     conn.close()
 
     minutes = round(total_ms / 60000, 1)
-    return jsonify({
-        'name': name,
-        'minutes': minutes,
+    return jsonify({ 
+        'name': name, 
+        'minutes': minutes, 
         'plays_count': plays_count,
         'top_artists': [artist['name'] for artist in artists],
         'top_artist_image': [artist['images'][0]['url'] for artist in artists if artist['images']],
@@ -257,7 +258,7 @@ def api_profile():
         'account_age_days': account_age_days,
         'pfp': pfp,
         'location': location
-    })  
+    })   # retorna tooooodoooos esses dados em um grande JSON
 
 @app.route('/edit-profile', methods=['GET', 'POST'])
 def edit_profile():
@@ -278,7 +279,7 @@ def edit_profile():
     return app.send_static_file('edit-profile.html')
     
 
-@app.route('/logout')
+@app.route('/logout') 
 def logout():
     session.clear()
     return redirect('/')
@@ -288,5 +289,5 @@ def error():
     return "Login cancelado"
 
 
-if __name__ == '__main__':
+if __name__ == '__main__': # se o arquivo for executado diretamente, ele inicia o servidor
     app.run(debug=True)

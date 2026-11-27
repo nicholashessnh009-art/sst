@@ -150,7 +150,7 @@
 body {
     background-color: var(--bg1);
     color: var(--text3);
-    font-family: "Space Mono", Arial; /* mudar dps */ 
+    font-family: "Space Mono", Arial; 
 }
 
 
@@ -559,3 +559,5 @@ nav a:hover {
   transform: scale(1.1);
   cursor: pointer;
 }
+
+/* gostaria de ter posto um @media com configurações de responsividade, mas não deu tempo */
