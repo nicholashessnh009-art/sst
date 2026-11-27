@@ -19,6 +19,11 @@ def init_db(location = DB):
     conn = sqlite3.connect(location)
     conn.execute('CREATE TABLE IF NOT EXISTS users (spotify_id TEXT PRIMARY KEY, name TEXT, refresh_token TEXT, created_at TEXT)')
     conn.execute('CREATE TABLE IF NOT EXISTS plays (user_id TEXT, track TEXT, artist TEXT, duration_ms INTEGER, time_played TEXT, UNIQUE(user_id, time_played))')
+    for column in ['pfp', 'location']:
+        try:
+            conn.execute(f'ALTER TABLE users ADD COLUMN {column} TEXT')
+        except sqlite3.OperationalError:
+            pass  # Coluna já existe, ignorar o erro
     conn.commit()
     conn.close()
 init_db()
@@ -143,9 +148,10 @@ def callback():
     user = eu.json()
     session['spotify_id'] = user['id']
     name = user['display_name']
+    pfp = user['images'][0]['url'] if user['images'] else None
     conn = sqlite3.connect(DB)
     cursor = conn.cursor()
-    cursor.execute('INSERT INTO users (spotify_id, name, refresh_token, created_at) VALUES (?, ?, ?, ?) ON CONFLICT(spotify_id) DO UPDATE SET refresh_token = excluded.refresh_token, name = excluded.name', (user['id'], name, tokens['refresh_token'], datetime.date.today().isoformat()))
+    cursor.execute('INSERT INTO users (spotify_id, name, refresh_token, created_at, pfp) VALUES (?, ?, ?, ?, ?) ON CONFLICT(spotify_id) DO UPDATE SET refresh_token = excluded.refresh_token, name = excluded.name, pfp = excluded.pfp ' , (user['id'], name, tokens['refresh_token'], datetime.date.today().isoformat(), pfp))
     conn.commit()
     conn.close()
     collect_all()
@@ -170,6 +176,20 @@ def profile():
 def leaderboard():
     return app.send_static_file('leaderboard.html')
 
+@app.route('/api/me')
+def api_me():
+    spotify_id = session.get('spotify_id')
+    if not spotify_id:
+        return jsonify({'logged_in': False})
+    conn = sqlite3.connect(DB)
+    name = conn.execute('SELECT name FROM users WHERE spotify_id = ?', (spotify_id,)).fetchone()[0]
+    pfp = conn.execute('SELECT pfp FROM users WHERE spotify_id = ?', (spotify_id,)).fetchone()[0]
+    location = conn.execute('SELECT location FROM users WHERE spotify_id = ?', (spotify_id,)).fetchone()[0]
+    conn.close()
+    return jsonify({'logged_in': True, 'name': name, 'pfp': pfp, 'location': location})
+
+
+                    
 @app.route('/api/leaderboard')
 def api_leaderboard():
     conn = sqlite3.connect(DB)

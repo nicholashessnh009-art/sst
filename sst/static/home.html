@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="static/js/home.js" defer></script>
+    <script src="static/js/nav.js" defer></script>
     <link rel="stylesheet" href="static/style/style.css">
     <title>SST: Pagina Inicial</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,6 +13,7 @@
 </head>
 <body>
     <nav id="navegação">
+        <button id="avatar-btn" aria-label="abrir menu"><img id='avatar' alt=""></button>
         <div id="links">
         <a href="/leaderboard">Ranking</a>
         <a href="/">Início</a>
@@ -19,7 +21,22 @@
         <a href="/logout" onclick="return confirm('Você tem certeza? (╥﹏╥)')">Sair</a>
         </div>
         
+        
     </nav>
+    <aside id="sidebar">
+        
+        <div id='sidebar-user-info'>
+            <button id='avatar-btn2' onclick="window.location.href='/profile'">
+                <img id='avatar2'>
+            </button>
+            <p id='sidebar-username'></p>
+        </div>
+        <a href="/profile">Seu Perfil</a>
+        <a href="/edit-profile">Editar Perfil</a>
+        <a href="/leaderboard">Ranking</a>
+        <a href="/logout" onclick="return confirm('Você tem certeza? (╥﹏╥)')">Sair</a>
+         <button id="close-sidebar"><img src="/static/style/img/close.svg"></button>
+    </aside>
     <main class="home-page">
     <h1 id="home-title">SST: Stats Tracker for Spotify</h1>
     <button onclick="window.location.href='/login'" class="botao">Login</button>
