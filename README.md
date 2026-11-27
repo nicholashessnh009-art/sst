@@ -3,7 +3,8 @@ Feito Por Nicholas M Hess
 
 Nicholas Hess, Turma 111 INFO do IFsul câmpus Novo Hamburgo
 Professor Lucas Mizusaki
-_vv desc do trabalho vv_
+
+
 **Site de Rastreamento de Estatísticas do Spotify**
 
 **Key features:**
