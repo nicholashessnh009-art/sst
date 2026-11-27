@@ -35,7 +35,7 @@ Página de Perfil
   2. Crie um venv
   3. instale as dependências (pip install -r requirements.txt)
   4. Crie um app no [Spotify Developer Dashboard](https://developer.spotify.com/dashboard)
-  5. Preencha as informações de .env.example e mude o nome para .env
+  5. Preencha as informações de .example e mude o nome para .env
   6. Execute app.py
   7.  Abra http://127.0.0.1:5000
 ## Limitações:
