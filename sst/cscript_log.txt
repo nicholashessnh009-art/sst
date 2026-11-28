@@ -37,3 +37,4 @@
 [27/11/2026 12:23:05] Coleta concluída. 0 novos plays. total: 368
 [27/11/2026 23:31:56] Coleta concluída. 1 novos plays. total: 398
 [28/11/2026 00:44:07] Coleta concluída. 31 novos plays. total: 429
+[28/11/2026 15:55:21] Coleta concluída. 50 novos plays. total: 479
