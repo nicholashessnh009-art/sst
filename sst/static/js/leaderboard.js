@@ -10,9 +10,16 @@ fetch('/api/leaderboard') // pega informações do servidor (ranking, artistas, 
         if (data.top_artists.length === 0 ){
             topArtistsList.textContent = 'Ainda sem dados. Parece que ninguém escutou nada ainda... :/'
         }
+        let index = 1
         for (let user of data.ranking) {
             const li = document.createElement('li')
-            li.textContent = `${user.name} - ${user.minutes} minutos`
+            if (index === 1) {
+                li.textContent = ` 👑 ${user.name} - ${user.minutes} minutos`
+            }
+            else {
+                li.textContent = `${user.name} - ${user.minutes} minutos`
+            }
+            index++
             li.classList.add('list-element')
             rankingList.appendChild(li)
             if (user.id === currentUser) {
