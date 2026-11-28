@@ -378,6 +378,13 @@ nav a:hover {
     border: 3px solid var(--ink);
     cursor: pointer;
     background-color: var(--bg2);
+    
+    transition: transform 0.2s;
+}
+
+#avatar-btn:hover {
+    transform: translateY(-50%) scale(1.05);
+    cursor: pointer;
 }
 
 #avatar-btn2 {
