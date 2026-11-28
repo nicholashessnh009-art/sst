@@ -291,6 +291,10 @@ nav a:hover {
     font-weight: bold;
 }
 
+.voce:hover {
+  text-decoration: underline;
+}
+
 .feature {
     display: block;
     aspect-ratio: 1 / 1;

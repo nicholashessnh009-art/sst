@@ -17,6 +17,7 @@ fetch('/api/leaderboard') // pega informações do servidor (ranking, artistas, 
             rankingList.appendChild(li)
             if (user.id === currentUser) {
                 li.classList.add('voce')
+                li.title = 'Você!'
             }
         }
         for (let artista of data.top_artists) {
